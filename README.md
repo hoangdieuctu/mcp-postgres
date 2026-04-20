@@ -14,14 +14,31 @@ Exposes 5 tools to Claude:
 
 The `execute` tool requires `confirm: true` so Claude must show the SQL to the user and get explicit confirmation before any write operation runs.
 
-## Setup
+## Docker (recommended)
+
+Pull and run from Docker Hub:
+
+```bash
+docker run -d \
+  -e API_KEY=secret \
+  -e POSTGRES_HOST=host.docker.internal \
+  -e POSTGRES_DB=mydb \
+  -e POSTGRES_USER=me \
+  -e POSTGRES_PASSWORD=secret \
+  -p 3000:3000 \
+  hoangdieuctu/mcp-postgres:1.0.0
+```
+
+Server starts at `http://127.0.0.1:3000/mcp`.
+
+## Setup (from source)
 
 ```bash
 npm install
 npm run build
 ```
 
-## Run
+## Run (from source)
 
 ```bash
 API_KEY=secret POSTGRES_DB=mydb POSTGRES_USER=me POSTGRES_PASSWORD=secret npm start
