@@ -1,15 +1,18 @@
 # mcp-postgres
 
-Read-only PostgreSQL MCP server using **Streamable HTTP transport**.
+PostgreSQL MCP server with read and write support over **Streamable HTTP transport**.
 
-Exposes 4 tools to Claude:
+Exposes 5 tools to Claude:
 
 | Tool | Description |
 |---|---|
-| `query` | Run a SELECT query |
+| `query` | Run a read-only SQL query (SELECT, EXPLAIN, SHOW, WITH…SELECT) |
+| `execute` | Run a write SQL statement (INSERT, UPDATE, DELETE, DDL) — requires `confirm: true` |
 | `list_tables` | List tables in a schema |
-| `describe_table` | Show columns/types/constraints |
+| `describe_table` | Show columns, types, and constraints |
 | `list_schemas` | List all schemas |
+
+The `execute` tool requires `confirm: true` so Claude must show the SQL to the user and get explicit confirmation before any write operation runs.
 
 ## Setup
 
@@ -21,7 +24,7 @@ npm run build
 ## Run
 
 ```bash
-POSTGRES_DB=mydb POSTGRES_USER=me POSTGRES_PASSWORD=secret npm start
+API_KEY=secret POSTGRES_DB=mydb POSTGRES_USER=me POSTGRES_PASSWORD=secret npm start
 ```
 
 Server starts at `http://127.0.0.1:3000/mcp`.
@@ -30,6 +33,7 @@ Server starts at `http://127.0.0.1:3000/mcp`.
 
 | Variable | Default | Required |
 |---|---|---|
+| `API_KEY` | — | Yes |
 | `POSTGRES_HOST` | `localhost` | No |
 | `POSTGRES_PORT` | `5432` | No |
 | `POSTGRES_DB` | — | Yes |
@@ -48,7 +52,10 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
   "mcpServers": {
     "postgres": {
       "type": "http",
-      "url": "http://127.0.0.1:3000/mcp"
+      "url": "http://127.0.0.1:3000/mcp",
+      "headers": {
+        "Authorization": "Bearer <your-api-key>"
+      }
     }
   }
 }
